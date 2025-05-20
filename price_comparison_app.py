@@ -62,15 +62,14 @@ def main():
     # Load data
     stores_df, items_df, prices_df = load_data()
     
-    # Item selection (always visible at the top)
-    st.markdown("### Select a Food Item to Compare Across Stores")
-    item_options = items_df['name'].tolist()
-    selected_item = st.selectbox("Choose an item:", item_options, key="item_selectbox_main")
-    selected_item_id = items_df[items_df['name'] == selected_item]['item_id'].iloc[0]
-    latest_date = prices_df['date'].max()
-    
     # Sidebar filters
     st.sidebar.header("Filters")
+    
+    # Move item selection to sidebar
+    item_options = items_df['name'].tolist()
+    selected_item = st.sidebar.selectbox("Choose a food item:", item_options, key="item_selectbox_main")
+    selected_item_id = items_df[items_df['name'] == selected_item]['item_id'].iloc[0]
+    latest_date = prices_df['date'].max()
     
     # Date range selector
     dates = sorted(prices_df['date'].unique())
@@ -279,19 +278,14 @@ def main():
 
     # Store Locations Map (Item-aware)
     st.header("Store Locations Map")
-    # Add filter combo box for store category
-    map_categories = ['All'] + sorted(stores_df['category'].dropna().unique().tolist())
-    selected_map_category = st.selectbox("Filter stores by category:", map_categories, key="map_category_filter")
-
     # Prepare map data with price for selected item
     item_map_prices = prices_df[(prices_df['item_id'] == selected_item_id) & (prices_df['date'] == latest_date)]
     map_df = stores_df.merge(item_map_prices[['store_id', 'price']], on='store_id', how='left')
     map_df = map_df.rename(columns={'lat': 'latitude', 'lon': 'longitude'})
     map_df['is_sopranos'] = map_df['store_name'].str.lower().str.contains('sopranos')
 
-    # Filter by selected category
-    if selected_map_category != 'All':
-        map_df = map_df[map_df['category'] == selected_map_category]
+    # Remove category filter above the map
+    # (No filtering by selected_map_category)
 
     # Normalize price for color scaling (green=cheapest, red=most expensive)
     min_price = map_df['price'].min()
