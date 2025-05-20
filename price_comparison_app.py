@@ -38,12 +38,27 @@ def calculate_price_recommendations(prices_df, stores_df, items_df, my_store_id=
         min_price = other_prices.min()
         max_price = other_prices.max()
         
-        # Always recommend the market average (other stores)
-        recommended_price = avg_price
+        # Get item details
+        item_details = items_df[items_df['item_id'] == item_id].iloc[0]
+        target_margin = item_details['target_margin']
+        
+        # Calculate current margin (assuming cost is 70% of market average)
+        estimated_cost = avg_price * 0.7
+        current_margin = (my_price - estimated_cost) / my_price
+        
+        # Calculate margin gap
+        margin_gap = current_margin - target_margin
+        
+        # Recommend price based on target margin
+        recommended_price = estimated_cost / (1 - target_margin)
         
         price_stats.append({
             'item_id': item_id,
-            'item_name': items_df[items_df['item_id'] == item_id]['name'].iloc[0],
+            'item_name': item_details['name'],
+            'category': item_details['category'],
+            'target_margin': target_margin,
+            'current_margin': current_margin,
+            'margin_gap': margin_gap,
             'my_price': my_price,
             'avg_price': avg_price,
             'min_price': min_price,
@@ -58,24 +73,16 @@ def calculate_price_recommendations(prices_df, stores_df, items_df, my_store_id=
 def main():
     st.title("🛒 Sopranos Supermarket Price Intelligence")
     st.subheader("Livonia, LA")
-    
+
     # Load data
     stores_df, items_df, prices_df = load_data()
-    
+
     # Sidebar filters
     st.sidebar.header("Filters")
-    
-    # Move item selection to sidebar
-    item_options = items_df['name'].tolist()
-    selected_item = st.sidebar.selectbox("Choose a food item:", item_options, key="item_selectbox_main")
-    selected_item_id = items_df[items_df['name'] == selected_item]['item_id'].iloc[0]
-    latest_date = prices_df['date'].max()
-    
     # Date range selector
     dates = sorted(prices_df['date'].unique())
     start_date = st.sidebar.selectbox("Start Date", dates, index=len(dates)-30)
     end_date = st.sidebar.selectbox("End Date", dates, index=len(dates)-1)
-    
     # Category filter
     categories = ['All'] + sorted(items_df['category'].unique().tolist())
     selected_category = st.sidebar.selectbox("Category", categories)
@@ -85,7 +92,6 @@ def main():
         (prices_df['date'] >= start_date) &
         (prices_df['date'] <= end_date)
     ]
-    
     if selected_category != 'All':
         category_items = items_df[items_df['category'] == selected_category]['item_id']
         filtered_prices = filtered_prices[filtered_prices['item_id'].isin(category_items)]
@@ -101,13 +107,13 @@ def main():
     
     # Format the recommendations table
     recommendations_display = price_recommendations[[
-        'item_name', 'my_price', 'avg_price', 'min_price', 'max_price',
-        'recommended_price', 'price_difference_percent'
+        'item_name', 'category', 'my_price', 'avg_price', 'min_price', 'max_price',
+        'recommended_price', 'price_difference_percent', 'current_margin', 'target_margin', 'margin_gap'
     ]].copy()
     
     recommendations_display.columns = [
-        'Item', 'Your Price', 'Market Average', 'Market Min', 'Market Max',
-        'Recommended Price', 'Price Difference (%)'
+        'Item', 'Category', 'Your Price', 'Market Average', 'Market Min', 'Market Max',
+        'Recommended Price', 'Price Difference (%)', 'Current Margin', 'Target Margin', 'Margin Gap'
     ]
     
     # Format price columns as $X.00
@@ -115,26 +121,91 @@ def main():
     for col in price_cols:
         recommendations_display[col] = recommendations_display[col].apply(lambda x: f"${x:.2f}")
     
-    # Add color coding for price differences
-    def color_price_diff(val):
-        if isinstance(val, str):
-            try:
-                val = float(val.replace('%','').replace('$',''))
-            except:
-                return ''
-        if val > 10:
-            return 'color: red'
-        elif val < -10:
-            return 'color: green'
-        return ''
+    # Format margin columns as percentages
+    margin_cols = ['Current Margin', 'Target Margin', 'Margin Gap']
+    for col in margin_cols:
+        recommendations_display[col] = recommendations_display[col].apply(lambda x: f"{x*100:.1f}%")
     
+    # Add color coding for price differences and margin gaps
+    def color_price_diff(val):
+        try:
+            v = float(str(val).replace('%','').replace('$',''))
+        except:
+            return ''
+        if v > 10:
+            return 'color: red'
+        elif v < -10:
+            return 'color: green'
+        else:
+            return ''
+
+    def color_margin_gap(val):
+        try:
+            v = float(str(val).replace('%',''))
+        except:
+            return ''
+        if v < -5:  # Margin is more than 5% below target
+            return 'color: red'
+        elif v > 5:  # Margin is more than 5% above target
+            return 'color: green'
+        else:
+            return ''
+
     st.dataframe(
-        recommendations_display.style.applymap(
-            color_price_diff,
-            subset=['Price Difference (%)']
-        ),
+        recommendations_display.style
+        .applymap(color_price_diff, subset=['Price Difference (%)'])
+        .applymap(color_margin_gap, subset=['Margin Gap']),
         use_container_width=True
     )
+    
+    # Category Analysis Section
+    st.header("Category Analysis")
+    
+    # Calculate category statistics
+    category_stats = price_recommendations.groupby('category').agg({
+        'current_margin': 'mean',
+        'target_margin': 'mean',
+        'margin_gap': 'mean',
+        'price_difference_percent': 'mean'
+    }).reset_index()
+    
+    # Format the category statistics
+    category_stats['current_margin'] = category_stats['current_margin'].apply(lambda x: f"{x*100:.1f}%")
+    category_stats['target_margin'] = category_stats['target_margin'].apply(lambda x: f"{x*100:.1f}%")
+    category_stats['margin_gap'] = category_stats['margin_gap'].apply(lambda x: f"{x*100:.1f}%")
+    category_stats['price_difference_percent'] = category_stats['price_difference_percent'].apply(lambda x: f"{x:.1f}%")
+    
+    category_stats.columns = [
+        'Category', 'Current Margin', 'Target Margin', 'Margin Gap', 'Price Difference (%)'
+    ]
+    
+    st.dataframe(
+        category_stats.style
+        .applymap(color_margin_gap, subset=['Margin Gap'])
+        .applymap(color_price_diff, subset=['Price Difference (%)']),
+        use_container_width=True
+    )
+    
+    # Visualize category performance
+    st.subheader("Category Performance")
+    
+    # Create a bar chart for margin gaps by category
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        x=price_recommendations['category'],
+        y=price_recommendations['margin_gap'] * 100,
+        name='Margin Gap (%)',
+        marker_color='lightblue'
+    ))
+    
+    fig.update_layout(
+        title='Margin Gap by Category',
+        xaxis_title='Category',
+        yaxis_title='Margin Gap (%)',
+        showlegend=True
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
     
     # Price Adjustment Section
     st.header("Price Adjustment Tool")
@@ -264,28 +335,29 @@ def main():
     
     st.dataframe(pivot_prices, use_container_width=True)
 
-    # Item Price Comparison Across Stores
+    # Store Locations Map (Item-aware)
+    st.header("Store Locations Map")
+    item_options = items_df['name'].tolist()
+    selected_item = st.selectbox("Choose a food item to display on the map:", item_options, key="item_selectbox_main")
+    selected_item_id = items_df[items_df['name'] == selected_item]['item_id'].iloc[0]
+    latest_date = prices_df['date'].max()
+
+    # Item Price Comparison Across Stores (now below the selectbox)
     st.header("Compare Prices for a Food Item Across Stores")
     item_prices = prices_df[(prices_df['item_id'] == selected_item_id) & (prices_df['date'] == latest_date)]
     item_prices = item_prices.merge(stores_df, on='store_id')
     item_prices = item_prices.sort_values('price')
-
-    # Display table
     st.subheader(f"Prices for {selected_item} at Each Store (as of {latest_date})")
     st.dataframe(item_prices[['store_name', 'price', 'distance']].rename(columns={
         'store_name': 'Store', 'price': 'Price ($)', 'distance': 'Distance (mi)'
     }), use_container_width=True)
 
-    # Store Locations Map (Item-aware)
-    st.header("Store Locations Map")
     # Prepare map data with price for selected item
     item_map_prices = prices_df[(prices_df['item_id'] == selected_item_id) & (prices_df['date'] == latest_date)]
     map_df = stores_df.merge(item_map_prices[['store_id', 'price']], on='store_id', how='left')
     map_df = map_df.rename(columns={'lat': 'latitude', 'lon': 'longitude'})
     map_df['is_sopranos'] = map_df['store_name'].str.lower().str.contains('sopranos')
-
-    # Remove category filter above the map
-    # (No filtering by selected_map_category)
+    map_df['price_str'] = map_df['price'].apply(lambda x: f"${x:.2f}" if pd.notnull(x) else "N/A")
 
     # Normalize price for color scaling (green=cheapest, red=most expensive)
     min_price = map_df['price'].min()
@@ -307,6 +379,8 @@ def main():
         get_radius=400,
         pickable=True,
         auto_highlight=True,
+        get_text='price_str',
+        get_text_size=16,
     )
 
     view_state = pdk.ViewState(
@@ -317,7 +391,7 @@ def main():
     )
 
     tooltip = {
-        "html": "<b>{store_name}</b><br/>Category: {category}<br/>Distance: {distance} mi<br/>Price: ${price}",
+        "html": "<b>{store_name}</b><br/>Category: {category}<br/>Distance: {distance} mi<br/><b>Price: {price_str}</b>",
         "style": {"backgroundColor": "steelblue", "color": "white"}
     }
 

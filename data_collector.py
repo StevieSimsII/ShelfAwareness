@@ -4,54 +4,42 @@ from datetime import datetime, timedelta
 import os
 from geopy.distance import geodesic
 from geopy.geocoders import Nominatim
+import requests
 
 def get_nearby_stores(center_lat, center_lon, radius_miles=50):
-    # List of stores in Louisiana with their coordinates
-    stores_data = [
-        {'store_id': 1, 'store_name': 'Sopranos Supermarket', 'category': 'supermarket', 
-         'lat': 30.5594, 'lon': -91.5557, 'address': 'Livonia, LA'},
-        {'store_id': 2, 'store_name': 'Walmart Supercenter', 'category': 'supermarket',
-         'lat': 30.4515, 'lon': -91.1874, 'address': 'Baton Rouge, LA'},
-        {'store_id': 3, 'store_name': 'Target', 'category': 'department_store',
-         'lat': 30.4507, 'lon': -91.1545, 'address': 'Baton Rouge, LA'},
-        {'store_id': 4, 'store_name': 'Rouses Market', 'category': 'supermarket',
-         'lat': 30.4521, 'lon': -91.1874, 'address': 'Baton Rouge, LA'},
-        {'store_id': 5, 'store_name': 'Winn-Dixie', 'category': 'supermarket',
-         'lat': 30.4515, 'lon': -91.1874, 'address': 'Baton Rouge, LA'},
-        {'store_id': 6, 'store_name': 'Dollar General', 'category': 'discount',
-         'lat': 30.5594, 'lon': -91.5557, 'address': 'Livonia, LA'},
-        {'store_id': 7, 'store_name': 'Family Dollar', 'category': 'discount',
-         'lat': 30.5594, 'lon': -91.5557, 'address': 'Livonia, LA'},
-        {'store_id': 8, 'store_name': 'ALDI', 'category': 'discount',
-         'lat': 30.4515, 'lon': -91.1874, 'address': 'Baton Rouge, LA'},
-        {'store_id': 9, 'store_name': 'Publix', 'category': 'supermarket',
-         'lat': 30.4515, 'lon': -91.1874, 'address': 'Baton Rouge, LA'},
-        {'store_id': 10, 'store_name': 'Safeway', 'category': 'supermarket',
-         'lat': 30.4515, 'lon': -91.1874, 'address': 'Baton Rouge, LA'},
-        {'store_id': 11, 'store_name': 'Walmart Neighborhood Market', 'category': 'supermarket',
-         'lat': 30.4515, 'lon': -91.1874, 'address': 'Baton Rouge, LA'},
-        {'store_id': 12, 'store_name': 'Circle K', 'category': 'convenience',
-         'lat': 30.5594, 'lon': -91.5557, 'address': 'Livonia, LA'},
-        {'store_id': 13, 'store_name': 'CVS Pharmacy', 'category': 'pharmacy',
-         'lat': 30.4515, 'lon': -91.1874, 'address': 'Baton Rouge, LA'},
-        {'store_id': 14, 'store_name': 'Walgreens', 'category': 'pharmacy',
-         'lat': 30.4515, 'lon': -91.1874, 'address': 'Baton Rouge, LA'},
-        {'store_id': 15, 'store_name': 'Save-A-Lot', 'category': 'discount',
-         'lat': 30.4515, 'lon': -91.1874, 'address': 'Baton Rouge, LA'}
-    ]
-    
-    # Filter stores within radius
-    nearby_stores = []
-    for store in stores_data:
-        distance = geodesic(
-            (center_lat, center_lon),
-            (store['lat'], store['lon'])
-        ).miles
-        if distance <= radius_miles:
-            store['distance'] = round(distance, 1)
-            nearby_stores.append(store)
-    
-    return nearby_stores
+    radius_meters = int(radius_miles * 1609.34)
+    query = f"""
+    [out:json][timeout:25];
+    (
+      node["shop"="supermarket"](around:{radius_meters},{center_lat},{center_lon});
+      node["shop"="convenience"](around:{radius_meters},{center_lat},{center_lon});
+      node["shop"="department_store"](around:{radius_meters},{center_lat},{center_lon});
+      node["shop"="discount"](around:{radius_meters},{center_lat},{center_lon});
+    );
+    out body;
+    >;
+    out skel qt;
+    """
+    url = "https://overpass-api.de/api/interpreter"
+    response = requests.get(url, params={'data': query})
+    data = response.json()
+    stores = []
+    store_id = 1
+    for element in data['elements']:
+        tags = element.get('tags', {})
+        name = tags.get('name', f"Store {store_id}")
+        category = tags.get('shop', 'unknown')
+        address = tags.get('addr:city', '')
+        stores.append({
+            'store_id': store_id,
+            'store_name': name,
+            'category': category,
+            'lat': element['lat'],
+            'lon': element['lon'],
+            'address': address
+        })
+        store_id += 1
+    return stores
 
 def generate_sample_data():
     # Livonia, LA coordinates
@@ -61,34 +49,74 @@ def generate_sample_data():
     # Get nearby stores
     stores = get_nearby_stores(LIVONIA_LAT, LIVONIA_LON)
     
-    # Create sample items with categories
-    items = [
-        {'item_id': 1, 'name': 'Milk (1 gallon)', 'category': 'Dairy'},
-        {'item_id': 2, 'name': 'Eggs (dozen)', 'category': 'Dairy'},
-        {'item_id': 3, 'name': 'Bread (loaf)', 'category': 'Bakery'},
-        {'item_id': 4, 'name': 'Chicken Breast (1lb)', 'category': 'Meat'},
-        {'item_id': 5, 'name': 'Ground Beef (1lb)', 'category': 'Meat'},
-        {'item_id': 6, 'name': 'Bananas (1lb)', 'category': 'Produce'},
-        {'item_id': 7, 'name': 'Apples (1lb)', 'category': 'Produce'},
-        {'item_id': 8, 'name': 'Rice (5lb bag)', 'category': 'Pantry'},
-        {'item_id': 9, 'name': 'Pasta (1lb)', 'category': 'Pantry'},
-        {'item_id': 10, 'name': 'Cereal (box)', 'category': 'Breakfast'}
-    ]
+    # Add distance from center to each store
+    for store in stores:
+        store['distance'] = round(geodesic(
+            (LIVONIA_LAT, LIVONIA_LON),
+            (store['lat'], store['lon'])
+        ).miles, 2)
     
-    # Generate prices for the last 30 days
-    prices = []
-    base_prices = {
-        'Milk (1 gallon)': 3.99,
-        'Eggs (dozen)': 4.99,
-        'Bread (loaf)': 2.99,
-        'Chicken Breast (1lb)': 5.99,
-        'Ground Beef (1lb)': 6.99,
-        'Bananas (1lb)': 0.69,
-        'Apples (1lb)': 1.99,
-        'Rice (5lb bag)': 8.99,
-        'Pasta (1lb)': 1.49,
-        'Cereal (box)': 4.49
-    }
+    # Create sample items with categories and margin targets
+    items = [
+        # Dairy & Eggs (15-25% margin)
+        {'item_id': 1, 'name': 'Milk (1 gallon)', 'category': 'Dairy', 'target_margin': 0.15},
+        {'item_id': 2, 'name': 'Eggs (dozen)', 'category': 'Dairy', 'target_margin': 0.15},
+        {'item_id': 3, 'name': 'Butter (1lb)', 'category': 'Dairy', 'target_margin': 0.20},
+        {'item_id': 4, 'name': 'Cheese (8oz)', 'category': 'Dairy', 'target_margin': 0.25},
+        
+        # Meat & Poultry (20-30% margin)
+        {'item_id': 5, 'name': 'Chicken Breast (1lb)', 'category': 'Meat', 'target_margin': 0.20},
+        {'item_id': 6, 'name': 'Ground Beef (1lb)', 'category': 'Meat', 'target_margin': 0.25},
+        {'item_id': 7, 'name': 'Pork Chops (1lb)', 'category': 'Meat', 'target_margin': 0.25},
+        {'item_id': 8, 'name': 'Bacon (12oz)', 'category': 'Meat', 'target_margin': 0.30},
+        
+        # Produce (25-35% margin)
+        {'item_id': 9, 'name': 'Bananas (1lb)', 'category': 'Produce', 'target_margin': 0.25},
+        {'item_id': 10, 'name': 'Apples (1lb)', 'category': 'Produce', 'target_margin': 0.30},
+        {'item_id': 11, 'name': 'Tomatoes (1lb)', 'category': 'Produce', 'target_margin': 0.35},
+        {'item_id': 12, 'name': 'Lettuce (head)', 'category': 'Produce', 'target_margin': 0.30},
+        
+        # Pantry (20-30% margin)
+        {'item_id': 13, 'name': 'Rice (5lb bag)', 'category': 'Pantry', 'target_margin': 0.20},
+        {'item_id': 14, 'name': 'Pasta (1lb)', 'category': 'Pantry', 'target_margin': 0.25},
+        {'item_id': 15, 'name': 'Cereal (box)', 'category': 'Pantry', 'target_margin': 0.30},
+        {'item_id': 16, 'name': 'Flour (5lb bag)', 'category': 'Pantry', 'target_margin': 0.20},
+        
+        # Beverages (25-40% margin)
+        {'item_id': 17, 'name': 'Coffee (12oz)', 'category': 'Beverages', 'target_margin': 0.35},
+        {'item_id': 18, 'name': 'Orange Juice (1/2 gal)', 'category': 'Beverages', 'target_margin': 0.30},
+        {'item_id': 19, 'name': 'Soda (12-pack)', 'category': 'Beverages', 'target_margin': 0.25},
+        
+        # Bakery (40-60% margin)
+        {'item_id': 20, 'name': 'Bread (loaf)', 'category': 'Bakery', 'target_margin': 0.40},
+        {'item_id': 21, 'name': 'Cake (whole)', 'category': 'Bakery', 'target_margin': 0.50},
+        {'item_id': 22, 'name': 'Cookies (dozen)', 'category': 'Bakery', 'target_margin': 0.45},
+        
+        # Prepared Foods (40-60% margin)
+        {'item_id': 23, 'name': 'Rotisserie Chicken', 'category': 'Prepared Foods', 'target_margin': 0.45},
+        {'item_id': 24, 'name': 'Deli Sandwich', 'category': 'Prepared Foods', 'target_margin': 0.50},
+        {'item_id': 25, 'name': 'Ready Meal', 'category': 'Prepared Foods', 'target_margin': 0.55},
+        
+        # Paper Goods (15-25% margin)
+        {'item_id': 26, 'name': 'Toilet Paper (12pk)', 'category': 'Paper Goods', 'target_margin': 0.15},
+        {'item_id': 27, 'name': 'Paper Towels (8pk)', 'category': 'Paper Goods', 'target_margin': 0.20},
+        
+        # Cleaning Supplies (20-30% margin)
+        {'item_id': 28, 'name': 'Laundry Detergent', 'category': 'Cleaning Supplies', 'target_margin': 0.25},
+        {'item_id': 29, 'name': 'Dish Soap', 'category': 'Cleaning Supplies', 'target_margin': 0.30},
+        
+        # Personal Care (25-35% margin)
+        {'item_id': 30, 'name': 'Shampoo', 'category': 'Personal Care', 'target_margin': 0.30},
+        {'item_id': 31, 'name': 'Toothpaste', 'category': 'Personal Care', 'target_margin': 0.35},
+        
+        # Health & Wellness (30-50% margin)
+        {'item_id': 32, 'name': 'Multivitamin', 'category': 'Health & Wellness', 'target_margin': 0.40},
+        {'item_id': 33, 'name': 'Pain Reliever', 'category': 'Health & Wellness', 'target_margin': 0.35},
+        
+        # Specialty Items (35-50% margin)
+        {'item_id': 34, 'name': 'Organic Apples (1lb)', 'category': 'Specialty Items', 'target_margin': 0.40},
+        {'item_id': 35, 'name': 'Gluten-Free Bread', 'category': 'Specialty Items', 'target_margin': 0.45}
+    ]
     
     # Store price multipliers (to create price variations between stores)
     store_multipliers = {
@@ -110,6 +138,46 @@ def generate_sample_data():
     }
     
     # Generate prices for the last 30 days
+    prices = []
+    base_prices = {
+        'Milk (1 gallon)': 3.99,
+        'Eggs (dozen)': 4.99,
+        'Butter (1lb)': 4.49,
+        'Cheese (8oz)': 3.99,
+        'Chicken Breast (1lb)': 5.99,
+        'Ground Beef (1lb)': 6.99,
+        'Pork Chops (1lb)': 5.49,
+        'Bacon (12oz)': 6.99,
+        'Bananas (1lb)': 0.69,
+        'Apples (1lb)': 1.99,
+        'Tomatoes (1lb)': 2.49,
+        'Lettuce (head)': 1.99,
+        'Rice (5lb bag)': 8.99,
+        'Pasta (1lb)': 1.49,
+        'Cereal (box)': 4.49,
+        'Flour (5lb bag)': 4.99,
+        'Coffee (12oz)': 7.99,
+        'Orange Juice (1/2 gal)': 3.99,
+        'Soda (12-pack)': 5.99,
+        'Bread (loaf)': 2.99,
+        'Cake (whole)': 24.99,
+        'Cookies (dozen)': 4.99,
+        'Rotisserie Chicken': 7.99,
+        'Deli Sandwich': 5.99,
+        'Ready Meal': 8.99,
+        'Toilet Paper (12pk)': 12.99,
+        'Paper Towels (8pk)': 8.99,
+        'Laundry Detergent': 9.99,
+        'Dish Soap': 2.99,
+        'Shampoo': 5.99,
+        'Toothpaste': 3.99,
+        'Multivitamin': 12.99,
+        'Pain Reliever': 8.99,
+        'Organic Apples (1lb)': 3.99,
+        'Gluten-Free Bread': 5.99
+    }
+    
+    # Generate prices for the last 30 days
     for day in range(30):
         current_date = datetime.now() - timedelta(days=day)
         date_str = current_date.strftime('%Y-%m-%d')
@@ -118,7 +186,7 @@ def generate_sample_data():
             for item in items:
                 # Get base price and apply store multiplier
                 base_price = base_prices[item['name']]
-                store_multiplier = store_multipliers[store['store_name']]
+                store_multiplier = store_multipliers.get(store['store_name'], 1.0)
                 
                 # Add some random variation (±5%)
                 variation = np.random.uniform(0.95, 1.05)
