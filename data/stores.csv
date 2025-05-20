@@ -1,0 +1,16 @@
+store_id,store_name,category,lat,lon,address,distance
+1,Sopranos Supermarket,supermarket,30.5594,-91.5557,"Livonia, LA",0.0
+2,Walmart Supercenter,supermarket,30.4515,-91.1874,"Baton Rouge, LA",23.2
+3,Target,department_store,30.4507,-91.1545,"Baton Rouge, LA",25.1
+4,Rouses Market,supermarket,30.4521,-91.1874,"Baton Rouge, LA",23.2
+5,Winn-Dixie,supermarket,30.4515,-91.1874,"Baton Rouge, LA",23.2
+6,Dollar General,discount,30.5594,-91.5557,"Livonia, LA",0.0
+7,Family Dollar,discount,30.5594,-91.5557,"Livonia, LA",0.0
+8,ALDI,discount,30.4515,-91.1874,"Baton Rouge, LA",23.2
+9,Publix,supermarket,30.4515,-91.1874,"Baton Rouge, LA",23.2
+10,Safeway,supermarket,30.4515,-91.1874,"Baton Rouge, LA",23.2
+11,Walmart Neighborhood Market,supermarket,30.4515,-91.1874,"Baton Rouge, LA",23.2
+12,Circle K,convenience,30.5594,-91.5557,"Livonia, LA",0.0
+13,CVS Pharmacy,pharmacy,30.4515,-91.1874,"Baton Rouge, LA",23.2
+14,Walgreens,pharmacy,30.4515,-91.1874,"Baton Rouge, LA",23.2
+15,Save-A-Lot,discount,30.4515,-91.1874,"Baton Rouge, LA",23.2

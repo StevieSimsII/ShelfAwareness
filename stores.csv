@@ -1,0 +1,133 @@
+name,address,location,distance,category,type,brand,operator
+Greyhound Shop,Florida Boulevard,"{'lat': 30.4498269, 'lng': -91.1762507}",0.640128823906547,other,convenience,N/A,N/A
+MJ's Food Mart,N/A,"{'lat': 30.4499879, 'lng': -91.1750727}",0.7108999753310828,other,convenience,N/A,N/A
+Plank Market & Deli,N/A,"{'lat': 30.4504484, 'lng': -91.1577534}",1.7448969990089576,other,convenience,N/A,N/A
+Circle K,N/A,"{'lat': 30.4437853, 'lng': -91.1517488}",2.1373629773094818,convenience,convenience,Circle K,N/A
+Chevron,South Acadian Thruway,"{'lat': 30.4263141, 'lng': -91.15022}",2.7098018394262335,other,convenience,Chevron,N/A
+Trader Joe's,Perkins Road,"{'lat': 30.422742, 'lng': -91.1535477}",2.712012537176687,supermarket,supermarket,Trader Joe's,N/A
+SoSis Boutique,Hwy 1 S,"{'lat': 30.4140686, 'lng': -91.2235341}",3.2700827958790697,other,supermarket,N/A,Chelsey Blankenship
+Red Stick Spice Co.,Jefferson Highway,"{'lat': 30.4436778, 'lng': -91.1308752}",3.3709438527984346,other,supermarket,N/A,N/A
+Tiger Fuel Mart,N/A,"{'lat': 30.4022068, 'lng': -91.1710274}",3.3883042618054806,other,convenience,N/A,N/A
+Circle K,College Drive,"{'lat': 30.4212158, 'lng': -91.1400763}",3.406914868944813,convenience,convenience,Circle K,N/A
+Rouses,N/A,"{'lat': 30.451951, 'lng': -91.1282098}",3.510972080815402,other,supermarket,Rouses,N/A
+Dollar Tree,College Drive,"{'lat': 30.4185045, 'lng': -91.1400115}",3.5198639225546073,discount,variety_store,Dollar Tree,N/A
+Sprouts Farmers Market,Rouzan Square Avenue,"{'lat': 30.4141177, 'lng': -91.1387389}",3.7682353459973505,specialty,supermarket,Sprouts Farmers Market,N/A
+Tony's Seafood,Plank Road,"{'lat': 30.4970151, 'lng': -91.1545964}",3.8054747241488496,other,supermarket,N/A,N/A
+Walmart Neighborhood Market,Highland Road,"{'lat': 30.395741, 'lng': -91.160018}",4.032190103354249,supermarket,supermarket,Walmart,Walmart
+Brother's Food Mart,Lee Drive,"{'lat': 30.3960871, 'lng': -91.1569771}",4.086546282742087,other,convenience,N/A,N/A
+Whole Foods Market,Corporate Boulevard,"{'lat': 30.4322474, 'lng': -91.1113975}",4.662917860260998,supermarket,supermarket,Whole Foods Market,Whole Foods
+Dollar Tree,Airline Highway,"{'lat': 30.5008545, 'lng': -91.1324371}",4.810520344194112,discount,variety_store,Dollar Tree,N/A
+supermarket at this location,N/A,"{'lat': 30.4296155, 'lng': -91.1074139}",4.940295927227108,other,supermarket,N/A,N/A
+Kangaroo Express,N/A,"{'lat': 30.5221746, 'lng': -91.180629}",5.026294311142265,other,convenience,Kangaroo Express,N/A
+Red Stick Farmers Market,Perkins Road,"{'lat': 30.398746, 'lng': -91.1190022}",5.351999731099378,other,supermarket,N/A,N/A
+Dollar General,N/A,"{'lat': 30.521151, 'lng': -91.1424812}",5.609129704010998,discount,variety_store,Dollar General,N/A
+Circle K,Airline Highway,"{'lat': 30.4424461, 'lng': -91.0893443}",5.846186775187939,convenience,convenience,Circle K,N/A
+Albertsons,Perkins Road,"{'lat': 30.3966574, 'lng': -91.110009}",5.8578182083187835,supermarket,supermarket,Albertsons,N/A
+Rouse's Market,N/A,"{'lat': 30.420213, 'lng': -91.0899138}",6.132430435249414,other,supermarket,N/A,N/A
+Family Dollar,N/A,"{'lat': 30.4200788, 'lng': -91.0895732}",6.154672667032319,discount,variety_store,Family Dollar,N/A
+Marshalls,N/A,"{'lat': 30.4325798, 'lng': -91.085642}",6.157906217639556,other,department_store,Marshalls,N/A
+Burlington,Airline Highway,"{'lat': 30.4318973, 'lng': -91.085565}",6.171461092439065,other,department_store,Burlington,N/A
+Our Daily Bread,Florida Boulevard,"{'lat': 30.4543562, 'lng': -91.0834624}",6.186489180168269,other,supermarket,N/A,N/A
+convenience at this location,N/A,"{'lat': 30.5415336, 'lng': -91.190524}",6.349171311817038,other,convenience,N/A,N/A
+Family Dollar,N/A,"{'lat': 30.4537548, 'lng': -91.0800889}",6.3854715930837775,discount,variety_store,Family Dollar,N/A
+Kangaroo Express,N/A,"{'lat': 30.52607, 'lng': -91.1264215}",6.397577650393734,other,convenience,Kangaroo Express,N/A
+Hi Nabor Supermarket,Florida Boulevard,"{'lat': 30.4538432, 'lng': -91.0787584}",6.465072005683922,other,supermarket,N/A,N/A
+Rouses Market,Bluebonnet Boulevard,"{'lat': 30.3815587, 'lng': -91.0985466}",7.050915674396182,other,supermarket,N/A,Rouses Market
+Dillard's,N/A,"{'lat': 30.388894, 'lng': -91.089878}",7.139769453542451,other,department_store,Dillard's,N/A
+Sears,N/A,"{'lat': 30.3898082, 'lng': -91.0884546}",7.172668698258103,other,department_store,Sears,N/A
+African Market,N/A,"{'lat': 30.4578924, 'lng': -91.0667087}",7.200572863251289,other,convenience,N/A,N/A
+Macy's,N/A,"{'lat': 30.3909404, 'lng': -91.0868647}",7.206789969759873,other,department_store,Macy's,N/A
+Dollar General,Burbank Dr,"{'lat': 30.3605265, 'lng': -91.1232769}",7.207884951494986,discount,variety_store,Dollar General,N/A
+Dillard's,N/A,"{'lat': 30.3882345, 'lng': -91.088842}",7.216522666187289,other,department_store,Dillard's,N/A
+Pinay Gigi Filipino Store,South Choctaw Drive,"{'lat': 30.4718623, 'lng': -91.0683123}",7.247517492796392,other,supermarket,N/A,N/A
+JCPenney,N/A,"{'lat': 30.3898356, 'lng': -91.0863099}",7.276955628321521,other,department_store,JCPenney,N/A
+Family Dollar,Burbank Dr,"{'lat': 30.3574807, 'lng': -91.116574}",7.600764975432832,discount,variety_store,Family Dollar,N/A
+Asian Supermarket,Florida Boulevard,"{'lat': 30.4576741, 'lng': -91.0591481}",7.649260333399693,other,supermarket,N/A,N/A
+Dollar Tree,N/A,"{'lat': 30.4576734, 'lng': -91.0587585}",7.672443636669517,discount,variety_store,Dollar Tree,N/A
+Exxon,South Sherwood Forest Boulevard,"{'lat': 30.4313529, 'lng': -91.0574592}",7.829406103760259,other,convenience,N/A,N/A
+Ideal Market,South Sherwood Forest Boulevard,"{'lat': 30.4362447, 'lng': -91.0563769}",7.846938031326613,other,supermarket,N/A,N/A
+Albertsons,Bluebonnet Boulevard,"{'lat': 30.3556365, 'lng': -91.1112524}",7.884745329479417,supermarket,supermarket,Albertsons,N/A
+Express One Stop,N/A,"{'lat': 30.4121102, 'lng': -91.0562468}",8.21529939657658,other,convenience,N/A,N/A
+Family Dollar,Florida Boulevard,"{'lat': 30.4594179, 'lng': -91.0468961}",8.387540593537071,discount,variety_store,Family Dollar,N/A
+Dollar Tree,N/A,"{'lat': 30.3870729, 'lng': -91.0651285}",8.44691812736075,discount,variety_store,Dollar Tree,N/A
+Big Lots,Siegen Lane,"{'lat': 30.3868065, 'lng': -91.0652856}",8.448204920322441,other,department_store,Big Lots,N/A
+ALDI,North Reiger Road,"{'lat': 30.3843488, 'lng': -91.0667344}",8.462460163806021,specialty,supermarket,ALDI,N/A
+Circle K,N/A,"{'lat': 30.5343228, 'lng': -91.08284}",8.532007191531697,convenience,convenience,Circle K,N/A
+Fast Lane,N/A,"{'lat': 30.4617252, 'lng': -91.0436689}",8.593624048840011,other,convenience,N/A,N/A
+Winn-Dixie,Siegen Lane,"{'lat': 30.370344, 'lng': -91.07192}",8.766408874294953,other,supermarket,Winn-Dixie,N/A
+Two Brother's Grocery,N/A,"{'lat': 30.3951819, 'lng': -91.0455947}",9.229519359617885,other,convenience,N/A,N/A
+Target,Millerville Road,"{'lat': 30.4409216, 'lng': -91.0217794}",9.87640286314303,supermarket,department_store,Target,N/A
+Farmer's & Artist's Market,Coursey Boulevard,"{'lat': 30.4090581, 'lng': -91.0240138}",10.11674128410151,other,other,N/A,N/A
+Walmart Neighborhood Market,Coursey Boulevard,"{'lat': 30.409498, 'lng': -91.020659}",10.301289002948266,supermarket,supermarket,Walmart,Walmart
+Walmart Neighborhood Market,Hooper Road,"{'lat': 30.547722, 'lng': -91.055864}",10.344978712932972,supermarket,supermarket,Walmart,Walmart
+convenience at this location,N/A,"{'lat': 30.5148843, 'lng': -91.0252208}",10.65183194860818,other,convenience,N/A,N/A
+Dollar Tree,O'Neal Lane,"{'lat': 30.4366726, 'lng': -91.0085194}",10.686813301291926,discount,variety_store,Dollar Tree,N/A
+Shoppers Value,Jones Creek Road,"{'lat': 30.3932576, 'lng': -91.0197265}",10.707250259830424,other,supermarket,N/A,N/A
+Easyshop,N/A,"{'lat': 30.2865334, 'lng': -91.2343504}",11.57151492809572,other,convenience,N/A,N/A
+Butcher Boy,Belleview Drive,"{'lat': 30.2783554, 'lng': -91.2304638}",12.066431044498115,other,convenience,N/A,N/A
+Albertsons,Airline Highway,"{'lat': 30.3572776, 'lng': -91.0083665}",12.409956574344234,supermarket,supermarket,Albertsons,N/A
+Dollar General,N/A,"{'lat': 30.2745634, 'lng': -91.2373239}",12.414527016982923,discount,variety_store,Dollar General,N/A
+L A Express Food Store,Jefferson Highway,"{'lat': 30.3626589, 'lng': -91.0046902}",12.416219212146643,other,convenience,N/A,N/A
+Sears,N/A,"{'lat': 30.4576751, 'lng': -90.9549841}",13.856194252971218,other,department_store,Sears,N/A
+Dollar General,N/A,"{'lat': 30.4594332, 'lng': -90.9549035}",13.866375364044533,discount,variety_store,Dollar General,N/A
+Dollar General,N/A,"{'lat': 30.5589208, 'lng': -90.9564853}",15.681334981029515,discount,variety_store,Dollar General,N/A
+Dollar Tree,N/A,"{'lat': 30.5603432, 'lng': -90.9571333}",15.69484366658305,discount,variety_store,Dollar Tree,N/A
+Five Below,N/A,"{'lat': 30.4678631, 'lng': -90.9208904}",15.929138117396693,other,variety_store,Five Below,N/A
+Ross,Crossing Way,"{'lat': 30.4663479, 'lng': -90.9206949}",15.93290938928303,other,department_store,Ross,N/A
+convenience at Juban Road,Juban Road,"{'lat': 30.4591428, 'lng': -90.914938}",16.248130319009366,other,convenience,N/A,N/A
+Circle K,N/A,"{'lat': 30.2717521, 'lng': -90.9850694}",17.182214245048392,convenience,convenience,Circle K,N/A
+Rouses,Highway 42,"{'lat': 30.3216541, 'lng': -90.9387377}",17.23993289232103,other,supermarket,Rouses,N/A
+Bravitos Market,N/A,"{'lat': 30.322819, 'lng': -90.931771}",17.55890623571355,other,convenience,N/A,N/A
+Rouses,N/A,"{'lat': 30.2823023, 'lng': -90.9551824}",18.005533076866243,other,supermarket,Rouses,N/A
+Carter's,N/A,"{'lat': 30.4860022, 'lng': -90.8608217}",19.62374733817295,other,supermarket,N/A,N/A
+On the Run,Walker Road North,"{'lat': 30.4885083, 'lng': -90.861149}",19.627072540708287,other,convenience,On the Run,N/A
+Family Dollar,N/A,"{'lat': 30.4895362, 'lng': -90.8612794}",19.629108386560056,discount,variety_store,Family Dollar,N/A
+Dollar General,N/A,"{'lat': 30.4924218, 'lng': -90.8515897}",20.229552941142153,discount,variety_store,Dollar General,N/A
+Kangaroo Express,N/A,"{'lat': 30.2101021, 'lng': -90.9545955}",21.55339076004459,other,convenience,Kangaroo Express,N/A
+River Place,LA 16,"{'lat': 30.3340737, 'lng': -90.8498679}",21.641673694329555,other,convenience,N/A,N/A
+Cracker Barrel Convenience Store,N/A,"{'lat': 30.2102525, 'lng': -90.942944}",22.000593919093387,other,convenience,N/A,N/A
+convenience at this location,N/A,"{'lat': 30.232087, 'lng': -90.906824}",22.45598899283103,other,convenience,N/A,N/A
+convenience at this location,N/A,"{'lat': 30.2102128, 'lng': -90.9218296}",22.858307899123403,other,convenience,N/A,N/A
+Popingo's,N/A,"{'lat': 30.1953013, 'lng': -90.9211554}",23.637311605855583,other,convenience,N/A,N/A
+Jett's Food Market,N/A,"{'lat': 30.7852909, 'lng': -91.3670097}",25.503076749941126,other,supermarket,N/A,N/A
+Best Stop,N/A,"{'lat': 30.2188772, 'lng': -90.8378727}",26.216087161902536,other,convenience,N/A,N/A
+Pack A Pack #2,N/A,"{'lat': 30.0975802, 'lng': -91.0047845}",26.57081251352821,other,convenience,N/A,N/A
+Leblanc's Payless,N/A,"{'lat': 30.0984774, 'lng': -91.0017013}",26.590694084953533,other,supermarket,N/A,N/A
+convenience at this location,N/A,"{'lat': 30.1699872, 'lng': -90.8790304}",26.630909040439978,other,convenience,N/A,N/A
+Family Dollar,N/A,"{'lat': 30.0980936, 'lng': -91.0010055}",26.632079625686593,discount,variety_store,Family Dollar,N/A
+convenience at this location,N/A,"{'lat': 30.1684953, 'lng': -90.8784959}",26.72740098897641,other,convenience,N/A,N/A
+convenience at this location,N/A,"{'lat': 30.169213, 'lng': -90.8776282}",26.727430455404782,other,convenience,N/A,N/A
+T & H Superette,N/A,"{'lat': 30.0899912, 'lng': -90.994535}",27.3011841232619,other,convenience,N/A,N/A
+Circle K,N/A,"{'lat': 29.9473552, 'lng': -91.2123484}",34.616549644059205,convenience,convenience,Circle K,N/A
+Matherne's,N/A,"{'lat': 30.0412148, 'lng': -90.7419005}",38.718376337733986,other,convenience,N/A,N/A
+Winn-Dixie,La Highway 3125,"{'lat': 30.0610324, 'lng': -90.6999081}",39.54794490582983,other,supermarket,Winn-Dixie,N/A
+Jeff's Grocery,West Club Deluxe Road,"{'lat': 30.4755189, 'lng': -90.5004766}",41.00484618431929,other,convenience,N/A,Jeff
+Miller's Mart,West Club Deluxe Road,"{'lat': 30.4763687, 'lng': -90.5000422}",41.03317279773125,other,convenience,N/A,N/A
+Albertsons,West Thomas Street,"{'lat': 30.4992881, 'lng': -90.4799652}",42.3239281723818,supermarket,supermarket,Albertsons,N/A
+Dollar Tree,N/A,"{'lat': 30.563334, 'lng': -90.4830382}",42.7141878772432,discount,variety_store,Dollar Tree,N/A
+convenience at this location,N/A,"{'lat': 30.6065093, 'lng': -90.4926331}",42.796457563556544,other,convenience,N/A,N/A
+Piggly Wiggly,West Railroad Avenue,"{'lat': 30.6303783, 'lng': -90.5002649}",42.80111559469041,other,supermarket,Piggly Wiggly,N/A
+Target,Hammond Square Drive,"{'lat': 30.480532, 'lng': -90.461589}",43.33789438339344,supermarket,department_store,Target,N/A
+Hebert's Super Market,S Main Street,"{'lat': 30.2779045, 'lng': -91.8903677}",43.6463105823161,other,supermarket,N/A,N/A
+convenience at this location,N/A,"{'lat': 30.7270415, 'lng': -90.5254582}",43.817691072244024,other,convenience,N/A,N/A
+Winn-Dixie,West Oak Street,"{'lat': 30.72802, 'lng': -90.5206937}",44.10245187515361,other,supermarket,Winn-Dixie,N/A
+Rees Street Market,Rees Street,"{'lat': 30.2782036, 'lng': -91.8995151}",44.16699894648547,other,convenience,N/A,N/A
+Dollar Tree,N/A,"{'lat': 30.7272947, 'lng': -90.5186525}",44.19047677605674,discount,variety_store,Dollar Tree,N/A
+Heberts,N/A,"{'lat': 30.2723022, 'lng': -91.8981852}",44.2021456952311,other,supermarket,N/A,N/A
+Family Dollar,S Cosby St,"{'lat': 31.0879119, 'lng': -91.0682514}",44.54842312443524,discount,variety_store,N/A,N/A
+Super II Foods,S Cosby St,"{'lat': 31.0882151, 'lng': -91.068002}",44.57139850668434,other,supermarket,N/A,N/A
+Dollar General,N/A,"{'lat': 30.7312031, 'lng': -90.5099219}",44.77534191395679,discount,variety_store,Dollar General,N/A
+Dollar General Market,N/A,"{'lat': 30.4433024, 'lng': -90.4233065}",45.579857130219665,discount,supermarket,Dollar General Market,N/A
+Walmart,Northwest Boulevard,"{'lat': 29.814155, 'lng': -91.51306}",47.91621665722884,supermarket,department_store,Walmart,Walmart
+Super 1 Foods,Northwest Boulevard,"{'lat': 29.8136949, 'lng': -91.5144988}",47.980323172196485,other,supermarket,Super 1 Foods,N/A
+Circle K,N/A,"{'lat': 29.812472, 'lng': -91.5123538}",48.00499362756366,convenience,convenience,Circle K,N/A
+ALDI,West Airline Highway,"{'lat': 30.0751889, 'lng': -90.504628}",48.261639089521914,specialty,supermarket,ALDI,N/A
+Winn-Dixie,West Airline Highway,"{'lat': 30.0755841, 'lng': -90.5026212}",48.34855396310815,other,supermarket,Winn-Dixie,N/A
+Walmart Supercenter,West Airline Highway,"{'lat': 30.0747668, 'lng': -90.4981931}",48.602869757260116,supermarket,supermarket,Walmart,Walmart
+Dollar General,N/A,"{'lat': 30.6361773, 'lng': -90.397729}",48.78493712180231,discount,variety_store,Dollar General,N/A
+Rouses,Saint Mary Street,"{'lat': 29.8005748, 'lng': -90.8479872}",49.08640514498757,other,supermarket,Rouses,N/A
+Ollie's Bargain Outlet,N/A,"{'lat': 29.987142, 'lng': -91.8173035}",49.35425923476712,other,variety_store,Ollie's Bargain Outlet,N/A
+Big Lots,North Canal Boulevard,"{'lat': 29.8070393, 'lng': -90.8178536}",49.4605192593396,other,department_store,Big Lots,N/A
+Dollar Tree,N/A,"{'lat': 29.8027766, 'lng': -90.8154455}",49.78782599650159,discount,variety_store,Dollar Tree,N/A
+Rouses,North Canal Boulevard,"{'lat': 29.8013076, 'lng': -90.8187578}",49.790300514605725,other,supermarket,Rouses,N/A
+Dollar General,N/A,"{'lat': 29.8020876, 'lng': -90.8156762}",49.82415613903277,discount,variety_store,Dollar General,N/A

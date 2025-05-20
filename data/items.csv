@@ -1,0 +1,11 @@
+item_id,name,category
+1,Milk (1 gallon),Dairy
+2,Eggs (dozen),Dairy
+3,Bread (loaf),Bakery
+4,Chicken Breast (1lb),Meat
+5,Ground Beef (1lb),Meat
+6,Bananas (1lb),Produce
+7,Apples (1lb),Produce
+8,Rice (5lb bag),Pantry
+9,Pasta (1lb),Pantry
+10,Cereal (box),Breakfast
