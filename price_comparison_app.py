@@ -62,6 +62,12 @@ def main():
     # Load data
     stores_df, items_df, prices_df = load_data()
     
+    # Item selection (used everywhere)
+    item_options = items_df['name'].tolist()
+    selected_item = st.selectbox("Select an item to compare:", item_options, key="item_selectbox_main")
+    selected_item_id = items_df[items_df['name'] == selected_item]['item_id'].iloc[0]
+    latest_date = prices_df['date'].max()
+    
     # Sidebar filters
     st.sidebar.header("Filters")
     
@@ -308,12 +314,7 @@ def main():
 
     # Item Price Comparison Across Stores
     st.header("Compare Prices for a Food Item Across Stores")
-    item_options = items_df['name'].tolist()
-    selected_item = st.selectbox("Select an item to compare:", item_options)
-
-    # Get item_id for the selected item
-    selected_item_id = items_df[items_df['name'] == selected_item]['item_id'].iloc[0]
-    latest_date = prices_df['date'].max()
+    # Use selected_item_id and selected_item from above
     item_prices = prices_df[(prices_df['item_id'] == selected_item_id) & (prices_df['date'] == latest_date)]
     item_prices = item_prices.merge(stores_df, on='store_id')
     item_prices = item_prices.sort_values('price')
