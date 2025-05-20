@@ -189,7 +189,7 @@ def main():
     # Visualize category performance
     st.subheader("Category Performance")
     
-    # Create a bar chart for margin gaps by category
+    # Create a bar chart for margin gaps by category using go.Figure instead of px
     fig = go.Figure()
     fig.add_trace(go.Bar(
         x=price_recommendations['category'],
