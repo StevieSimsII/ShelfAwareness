@@ -37,15 +37,8 @@ def calculate_price_recommendations(prices_df, stores_df, items_df, my_store_id=
         min_price = other_prices.min()
         max_price = other_prices.max()
         
-        # Calculate recommended price
-        # If my price is significantly higher than average, recommend lowering
-        if my_price > avg_price * 1.1:
-            recommended_price = avg_price * 1.05  # 5% above average
-        # If my price is significantly lower than average, recommend raising
-        elif my_price < avg_price * 0.9:
-            recommended_price = avg_price * 0.95  # 5% below average
-        else:
-            recommended_price = my_price  # Keep current price
+        # Always recommend the market average (other stores)
+        recommended_price = avg_price
         
         price_stats.append({
             'item_id': item_id,
