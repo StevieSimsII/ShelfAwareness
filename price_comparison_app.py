@@ -62,9 +62,10 @@ def main():
     # Load data
     stores_df, items_df, prices_df = load_data()
     
-    # Item selection (used everywhere)
+    # Item selection (always visible at the top)
+    st.markdown("### Select a Food Item to Compare Across Stores")
     item_options = items_df['name'].tolist()
-    selected_item = st.selectbox("Select an item to compare:", item_options, key="item_selectbox_main")
+    selected_item = st.selectbox("Choose an item:", item_options, key="item_selectbox_main")
     selected_item_id = items_df[items_df['name'] == selected_item]['item_id'].iloc[0]
     latest_date = prices_df['date'].max()
     
@@ -266,7 +267,6 @@ def main():
 
     # Item Price Comparison Across Stores
     st.header("Compare Prices for a Food Item Across Stores")
-    # Use selected_item_id and selected_item from above
     item_prices = prices_df[(prices_df['item_id'] == selected_item_id) & (prices_df['date'] == latest_date)]
     item_prices = item_prices.merge(stores_df, on='store_id')
     item_prices = item_prices.sort_values('price')
@@ -277,17 +277,21 @@ def main():
         'store_name': 'Store', 'price': 'Price ($)', 'distance': 'Distance (mi)'
     }), use_container_width=True)
 
-    # Display bar chart
-    st.subheader(f"Price Comparison Bar Chart for {selected_item}")
-    st.bar_chart(item_prices.set_index('store_name')['price'])
-
     # Store Locations Map (Item-aware)
     st.header("Store Locations Map")
+    # Add filter combo box for store category
+    map_categories = ['All'] + sorted(stores_df['category'].dropna().unique().tolist())
+    selected_map_category = st.selectbox("Filter stores by category:", map_categories, key="map_category_filter")
+
     # Prepare map data with price for selected item
     item_map_prices = prices_df[(prices_df['item_id'] == selected_item_id) & (prices_df['date'] == latest_date)]
     map_df = stores_df.merge(item_map_prices[['store_id', 'price']], on='store_id', how='left')
     map_df = map_df.rename(columns={'lat': 'latitude', 'lon': 'longitude'})
     map_df['is_sopranos'] = map_df['store_name'].str.lower().str.contains('sopranos')
+
+    # Filter by selected category
+    if selected_map_category != 'All':
+        map_df = map_df[map_df['category'] == selected_map_category]
 
     # Normalize price for color scaling (green=cheapest, red=most expensive)
     min_price = map_df['price'].min()
@@ -312,8 +316,8 @@ def main():
     )
 
     view_state = pdk.ViewState(
-        latitude=map_df['latitude'].mean(),
-        longitude=map_df['longitude'].mean(),
+        latitude=map_df['latitude'].mean() if not map_df.empty else 30.5594,
+        longitude=map_df['longitude'].mean() if not map_df.empty else -91.5557,
         zoom=9,
         pitch=0,
     )
