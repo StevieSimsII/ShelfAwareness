@@ -89,3 +89,47 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Local Development
+
+1. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+2. Run the app locally:
+```bash
+streamlit run price_comparison_app.py
+```
+
+## Deployment
+
+This app is configured for deployment on Streamlit Cloud. To deploy:
+
+1. Push your code to GitHub
+2. Go to [share.streamlit.io](https://share.streamlit.io)
+3. Connect your GitHub repository
+4. Select `price_comparison_app.py` as the main file
+5. Deploy
+
+## Project Structure
+
+- `price_comparison_app.py`: Main Streamlit application
+- `data_collector.py`: Script for generating sample data
+- `data/`: Directory containing CSV data files
+  - `stores.csv`: Store information
+  - `items.csv`: Product information
+  - `prices.csv`: Price history
+
+## Features
+
+- Real-time price comparison
+- Margin analysis
+- Category-specific insights
+- Interactive visualizations
+- Price trend analysis
+- Competitor mapping
+
+## Requirements
+
+See `requirements.txt` for full list of dependencies.
