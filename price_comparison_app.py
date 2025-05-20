@@ -264,6 +264,23 @@ def main():
     
     st.dataframe(pivot_prices, use_container_width=True)
 
+    # Item Price Comparison Across Stores
+    st.header("Compare Prices for a Food Item Across Stores")
+    # Use selected_item_id and selected_item from above
+    item_prices = prices_df[(prices_df['item_id'] == selected_item_id) & (prices_df['date'] == latest_date)]
+    item_prices = item_prices.merge(stores_df, on='store_id')
+    item_prices = item_prices.sort_values('price')
+
+    # Display table
+    st.subheader(f"Prices for {selected_item} at Each Store (as of {latest_date})")
+    st.dataframe(item_prices[['store_name', 'price', 'distance']].rename(columns={
+        'store_name': 'Store', 'price': 'Price ($)', 'distance': 'Distance (mi)'
+    }), use_container_width=True)
+
+    # Display bar chart
+    st.subheader(f"Price Comparison Bar Chart for {selected_item}")
+    st.bar_chart(item_prices.set_index('store_name')['price'])
+
     # Store Locations Map (Item-aware)
     st.header("Store Locations Map")
     # Prepare map data with price for selected item
@@ -310,24 +327,7 @@ def main():
         layers=[layer],
         initial_view_state=view_state,
         tooltip=tooltip
-    ))
-
-    # Item Price Comparison Across Stores
-    st.header("Compare Prices for a Food Item Across Stores")
-    # Use selected_item_id and selected_item from above
-    item_prices = prices_df[(prices_df['item_id'] == selected_item_id) & (prices_df['date'] == latest_date)]
-    item_prices = item_prices.merge(stores_df, on='store_id')
-    item_prices = item_prices.sort_values('price')
-
-    # Display table
-    st.subheader(f"Prices for {selected_item} at Each Store (as of {latest_date})")
-    st.dataframe(item_prices[['store_name', 'price', 'distance']].rename(columns={
-        'store_name': 'Store', 'price': 'Price ($)', 'distance': 'Distance (mi)'
-    }), use_container_width=True)
-
-    # Display bar chart
-    st.subheader(f"Price Comparison Bar Chart for {selected_item}")
-    st.bar_chart(item_prices.set_index('store_name')['price'])
+    ), use_container_width=True, height=700)
 
 if __name__ == "__main__":
     main() 
