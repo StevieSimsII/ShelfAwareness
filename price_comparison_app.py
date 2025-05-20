@@ -153,8 +153,8 @@ def main():
 
     st.dataframe(
         recommendations_display.style
-        .applymap(color_price_diff, subset=['Price Difference (%)'])
-        .applymap(color_margin_gap, subset=['Margin Gap']),
+        .map(color_price_diff, subset=['Price Difference (%)'])
+        .map(color_margin_gap, subset=['Margin Gap']),
         use_container_width=True
     )
     
@@ -181,8 +181,8 @@ def main():
     
     st.dataframe(
         category_stats.style
-        .applymap(color_margin_gap, subset=['Margin Gap'])
-        .applymap(color_price_diff, subset=['Price Difference (%)']),
+        .map(color_margin_gap, subset=['Margin Gap'])
+        .map(color_price_diff, subset=['Price Difference (%)']),
         use_container_width=True
     )
     
