@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 import numpy as np
+import pydeck as pdk
 
 # Set page config
 st.set_page_config(
@@ -256,6 +257,76 @@ def main():
     pivot_prices['Distance (miles)'] = store_prices.groupby('store_name')['distance'].first()
     
     st.dataframe(pivot_prices, use_container_width=True)
+
+    # Store Locations Map (Item-aware)
+    st.header("Store Locations Map")
+    # Prepare map data with price for selected item
+    item_map_prices = prices_df[(prices_df['item_id'] == selected_item_id) & (prices_df['date'] == latest_date)]
+    map_df = stores_df.merge(item_map_prices[['store_id', 'price']], on='store_id', how='left')
+    map_df = map_df.rename(columns={'lat': 'latitude', 'lon': 'longitude'})
+    map_df['is_sopranos'] = map_df['store_name'].str.lower().str.contains('sopranos')
+
+    # Normalize price for color scaling (green=cheapest, red=most expensive)
+    min_price = map_df['price'].min()
+    max_price = map_df['price'].max()
+    def price_to_color(price):
+        if pd.isnull(price):
+            return [128, 128, 128, 120]  # gray for missing
+        norm = (price - min_price) / (max_price - min_price) if max_price > min_price else 0
+        r = int(255 * norm)
+        g = int(255 * (1 - norm))
+        return [r, g, 0, 180]
+    map_df['color'] = map_df.apply(lambda row: [255, 0, 0, 200] if row['is_sopranos'] else price_to_color(row['price']), axis=1)
+
+    layer = pdk.Layer(
+        "ScatterplotLayer",
+        data=map_df,
+        get_position='[longitude, latitude]',
+        get_color='color',
+        get_radius=400,
+        pickable=True,
+        auto_highlight=True,
+    )
+
+    view_state = pdk.ViewState(
+        latitude=map_df['latitude'].mean(),
+        longitude=map_df['longitude'].mean(),
+        zoom=9,
+        pitch=0,
+    )
+
+    tooltip = {
+        "html": "<b>{store_name}</b><br/>Category: {category}<br/>Distance: {distance} mi<br/>Price: ${price}",
+        "style": {"backgroundColor": "steelblue", "color": "white"}
+    }
+
+    st.pydeck_chart(pdk.Deck(
+        layers=[layer],
+        initial_view_state=view_state,
+        tooltip=tooltip
+    ))
+
+    # Item Price Comparison Across Stores
+    st.header("Compare Prices for a Food Item Across Stores")
+    item_options = items_df['name'].tolist()
+    selected_item = st.selectbox("Select an item to compare:", item_options)
+
+    # Get item_id for the selected item
+    selected_item_id = items_df[items_df['name'] == selected_item]['item_id'].iloc[0]
+    latest_date = prices_df['date'].max()
+    item_prices = prices_df[(prices_df['item_id'] == selected_item_id) & (prices_df['date'] == latest_date)]
+    item_prices = item_prices.merge(stores_df, on='store_id')
+    item_prices = item_prices.sort_values('price')
+
+    # Display table
+    st.subheader(f"Prices for {selected_item} at Each Store (as of {latest_date})")
+    st.dataframe(item_prices[['store_name', 'price', 'distance']].rename(columns={
+        'store_name': 'Store', 'price': 'Price ($)', 'distance': 'Distance (mi)'
+    }), use_container_width=True)
+
+    # Display bar chart
+    st.subheader(f"Price Comparison Bar Chart for {selected_item}")
+    st.bar_chart(item_prices.set_index('store_name')['price'])
 
 if __name__ == "__main__":
     main() 
