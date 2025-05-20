@@ -1,15 +1,23 @@
-# Grocery Price Comparison Tool
+# ShelfAwareness - Grocery Analytics & Price Comparison
 
-This Python script compares grocery prices across different stores within a specified radius of a given zip code.
+A comprehensive toolkit for grocery store analytics and price comparison. This project helps you find nearby grocery stores, compare prices across multiple retailers, and provides insights to improve grocery retail operations.
 
 ## Features
 
-- Finds grocery stores within a 50-mile radius of a specified zip code
-- Compares prices for 50+ common grocery items across categories
-- Real-time price scraping from major retailers (Walmart, Target)
-- Generates a CSV report with price comparisons
-- Creates interactive visualizations of price data
-- Includes store distances and timestamps
+- **Price Comparison**: Finds grocery stores within a 50-mile radius and compares prices for 50+ common grocery items
+- **Data Analytics**: Tools and documentation for implementing advanced grocery retail analytics
+- **Real-time Price Data**: Scrapes real prices from major retailers (Walmart, Target)
+- **Reporting**: Generates CSV reports with detailed price comparisons
+- **Visualization**: Creates interactive data visualizations
+- **Location Intelligence**: Includes store distances and geographic analysis
+
+## Project Components
+
+- **[`price_comparison.py`](price_comparison.py)**: Core script that finds stores and collects price data
+- **[`price_comparison_app.py`](price_comparison_app.py)**: Streamlit web app for interactive exploration
+- **[`data_collector.py`](data_collector.py)**: Tool for collecting and aggregating price data
+- **[`grocery_analytics_improvement_ideas.md`](grocery_analytics_improvement_ideas.md)**: Comprehensive ideas for improving grocery analytics
+- **[`store_api_comparison.md`](store_api_comparison.md)**: Evaluation of different store APIs for data collection
 
 ## Setup
 
@@ -44,13 +52,12 @@ The script will:
 
 ## Output
 
-### CSV Report
-The script generates a CSV file with the following columns:
-- Item Name
-- Store Name
-- Price
-- Distance (in miles)
-- Date
+### Data Files
+- **`stores.csv`**: Information about nearby grocery stores
+- **`price_comparison_report.csv`**: Detailed price comparison data
+- **`data/items.csv`**: Master list of grocery items
+- **`data/prices.csv`**: Historical price data
+- **`data/stores.csv`**: Detailed store information
 
 ### Visualizations
 The script creates three interactive HTML visualizations:
@@ -78,6 +85,24 @@ The script includes comprehensive error handling and logging:
 - Detailed logging of all operations
 - Automatic cleanup of browser resources
 
+## Analytics Documentation
+
+This project includes several markdown files documenting analytics approaches:
+
+### [`grocery_analytics_improvement_ideas.md`](grocery_analytics_improvement_ideas.md)
+Comprehensive collection of innovative analytics ideas tailored for grocery retailers, including:
+
+- **Data Collection**: Real-time POS tracking, loyalty data analysis, foot traffic sensors
+- **Data Analysis**: Predictive modeling, basket analysis, shrinkage analytics
+- **Advanced Techniques**: ML models, NLP analysis, anomaly detection
+- **Geo & Market Intelligence**: Price mapping, regional trends, demographic analysis
+- **Operational Efficiency**: Shelf space optimization, predictive inventory modeling
+- **Customer Experience**: Sentiment analysis, movement heatmaps, personalization
+- **And more**: Omnichannel integration, sustainability insights, pricing optimization
+
+### [`store_api_comparison.md`](store_api_comparison.md)
+Evaluation of different APIs for collecting store and pricing data.
+
 ## Note
 
 The script uses web scraping to get real prices from:
@@ -86,4 +111,12 @@ The script uses web scraping to get real prices from:
 
 For other stores, it uses simulated price data. To add more stores:
 1. Implement additional scraping methods in the `GroceryPriceComparer` class
-2. Add the store name pattern matching in the `get_prices` method 
+2. Add the store name pattern matching in the `get_prices` method
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
