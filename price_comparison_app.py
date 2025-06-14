@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from datetime import datetime, timedelta
+from datetime import datetime
 import numpy as np
 import pydeck as pdk
 
@@ -19,9 +19,14 @@ def load_data():
     stores_df = pd.read_csv('data/stores.csv')
     items_df = pd.read_csv('data/items.csv')
     prices_df = pd.read_csv('data/prices.csv')
+    # Force all IDs to string for reliable merging
+    stores_df['store_id'] = stores_df['store_id'].astype(str)
+    prices_df['store_id'] = prices_df['store_id'].astype(str)
+    prices_df['item_id'] = prices_df['item_id'].astype(str)
+    items_df['item_id'] = items_df['item_id'].astype(str)
     return stores_df, items_df, prices_df
 
-def calculate_price_recommendations(prices_df, stores_df, items_df, my_store_id=1):
+def calculate_price_recommendations(prices_df, stores_df, items_df, my_store_id='1'):
     # Get latest prices
     latest_date = prices_df['date'].max()
     latest_prices = prices_df[prices_df['date'] == latest_date]
@@ -30,7 +35,8 @@ def calculate_price_recommendations(prices_df, stores_df, items_df, my_store_id=
     price_stats = []
     for item_id in items_df['item_id']:
         item_prices = latest_prices[latest_prices['item_id'] == item_id]
-        my_price = item_prices[item_prices['store_id'] == my_store_id]['price'].iloc[0]
+        my_store_prices = item_prices[item_prices['store_id'] == my_store_id]['price']
+        my_price = my_store_prices.iloc[0] if not my_store_prices.empty else np.nan
         
         # Calculate statistics excluding my store
         other_prices = item_prices[item_prices['store_id'] != my_store_id]['price']
@@ -40,22 +46,23 @@ def calculate_price_recommendations(prices_df, stores_df, items_df, my_store_id=
         
         # Get item details
         item_details = items_df[items_df['item_id'] == item_id].iloc[0]
-        target_margin = item_details['target_margin']
+        
+        # Use default target margin of 20%
+        target_margin = 0.20
         
         # Calculate current margin (assuming cost is 70% of market average)
-        estimated_cost = avg_price * 0.7
-        current_margin = (my_price - estimated_cost) / my_price
+        estimated_cost = avg_price * 0.7 if not np.isnan(avg_price) else np.nan
+        current_margin = (my_price - estimated_cost) / my_price if not np.isnan(my_price) and not np.isnan(estimated_cost) else np.nan
         
         # Calculate margin gap
-        margin_gap = current_margin - target_margin
+        margin_gap = current_margin - target_margin if not np.isnan(current_margin) else np.nan
         
         # Recommend price based on target margin
-        recommended_price = estimated_cost / (1 - target_margin)
+        recommended_price = estimated_cost / (1 - target_margin) if not np.isnan(estimated_cost) else np.nan
         
         price_stats.append({
             'item_id': item_id,
             'item_name': item_details['name'],
-            'category': item_details['category'],
             'target_margin': target_margin,
             'current_margin': current_margin,
             'margin_gap': margin_gap,
@@ -63,9 +70,9 @@ def calculate_price_recommendations(prices_df, stores_df, items_df, my_store_id=
             'avg_price': avg_price,
             'min_price': min_price,
             'max_price': max_price,
-            'recommended_price': round(recommended_price, 2),
-            'price_difference': round(my_price - avg_price, 2),
-            'price_difference_percent': round((my_price - avg_price) / avg_price * 100, 1)
+            'recommended_price': round(recommended_price, 2) if not np.isnan(recommended_price) else np.nan,
+            'price_difference': round(my_price - avg_price, 2) if not np.isnan(my_price) and not np.isnan(avg_price) else np.nan,
+            'price_difference_percent': round((my_price - avg_price) / avg_price * 100, 1) if not np.isnan(my_price) and not np.isnan(avg_price) and avg_price != 0 else np.nan
         })
     
     return pd.DataFrame(price_stats)
@@ -77,25 +84,6 @@ def main():
     # Load data
     stores_df, items_df, prices_df = load_data()
 
-    # Sidebar filters
-    st.sidebar.header("Filters")
-    # Date range selector
-    dates = sorted(prices_df['date'].unique())
-    start_date = st.sidebar.selectbox("Start Date", dates, index=len(dates)-30)
-    end_date = st.sidebar.selectbox("End Date", dates, index=len(dates)-1)
-    # Category filter
-    categories = ['All'] + sorted(items_df['category'].unique().tolist())
-    selected_category = st.sidebar.selectbox("Category", categories)
-    
-    # Filter data based on selections
-    filtered_prices = prices_df[
-        (prices_df['date'] >= start_date) &
-        (prices_df['date'] <= end_date)
-    ]
-    if selected_category != 'All':
-        category_items = items_df[items_df['category'] == selected_category]['item_id']
-        filtered_prices = filtered_prices[filtered_prices['item_id'].isin(category_items)]
-    
     # Price Recommendations Section
     st.header("Price Recommendations")
     
@@ -107,12 +95,12 @@ def main():
     
     # Format the recommendations table
     recommendations_display = price_recommendations[[
-        'item_name', 'category', 'my_price', 'avg_price', 'min_price', 'max_price',
+        'item_name', 'my_price', 'avg_price', 'min_price', 'max_price',
         'recommended_price', 'price_difference_percent', 'current_margin', 'target_margin', 'margin_gap'
     ]].copy()
     
     recommendations_display.columns = [
-        'Item', 'Category', 'Your Price', 'Market Average', 'Market Min', 'Market Max',
+        'Item', 'Your Price', 'Market Average', 'Market Min', 'Market Max',
         'Recommended Price', 'Price Difference (%)', 'Current Margin', 'Target Margin', 'Margin Gap'
     ]
     
@@ -157,55 +145,6 @@ def main():
         .map(color_margin_gap, subset=['Margin Gap']),
         use_container_width=True
     )
-    
-    # Category Analysis Section
-    st.header("Category Analysis")
-    
-    # Calculate category statistics
-    category_stats = price_recommendations.groupby('category').agg({
-        'current_margin': 'mean',
-        'target_margin': 'mean',
-        'margin_gap': 'mean',
-        'price_difference_percent': 'mean'
-    }).reset_index()
-    
-    # Format the category statistics
-    category_stats['current_margin'] = category_stats['current_margin'].apply(lambda x: f"{x*100:.1f}%")
-    category_stats['target_margin'] = category_stats['target_margin'].apply(lambda x: f"{x*100:.1f}%")
-    category_stats['margin_gap'] = category_stats['margin_gap'].apply(lambda x: f"{x*100:.1f}%")
-    category_stats['price_difference_percent'] = category_stats['price_difference_percent'].apply(lambda x: f"{x:.1f}%")
-    
-    category_stats.columns = [
-        'Category', 'Current Margin', 'Target Margin', 'Margin Gap', 'Price Difference (%)'
-    ]
-    
-    st.dataframe(
-        category_stats.style
-        .map(color_margin_gap, subset=['Margin Gap'])
-        .map(color_price_diff, subset=['Price Difference (%)']),
-        use_container_width=True
-    )
-    
-    # Visualize category performance
-    st.subheader("Category Performance")
-    
-    # Create a bar chart for margin gaps by category using go.Figure instead of px
-    fig = go.Figure()
-    fig.add_trace(go.Bar(
-        x=price_recommendations['category'],
-        y=price_recommendations['margin_gap'] * 100,
-        name='Margin Gap (%)',
-        marker_color='lightblue'
-    ))
-    
-    fig.update_layout(
-        title='Margin Gap by Category',
-        xaxis_title='Category',
-        yaxis_title='Margin Gap (%)',
-        showlegend=True
-    )
-    
-    st.plotly_chart(fig, use_container_width=True)
     
     # Price Adjustment Section
     st.header("Price Adjustment Tool")
@@ -265,141 +204,96 @@ def main():
             # Save the new prices
             st.success("Prices updated successfully!")
     
-    # Market Analysis Section
-    st.header("Market Analysis")
-    
-    # Price trends over time
-    st.subheader("Price Trends")
-    
-    # Get the top 5 items with the largest price differences
-    top_items = price_recommendations.nlargest(5, 'price_difference_percent')['item_id'].tolist()
-    
-    # Plot price trends for these items
-    fig = go.Figure()
-    
-    for item_id in top_items:
-        item_name = items_df[items_df['item_id'] == item_id]['name'].iloc[0]
-        item_prices = filtered_prices[filtered_prices['item_id'] == item_id]
-        
-        # Plot your store's prices
-        my_prices = item_prices[item_prices['store_id'] == 1]
-        fig.add_trace(go.Scatter(
-            x=my_prices['date'],
-            y=my_prices['price'],
-            name=f"{item_name} (Your Store)",
-            line=dict(width=2)
-        ))
-        
-        # Plot average prices
-        avg_prices = item_prices.groupby('date')['price'].mean().reset_index()
-        fig.add_trace(go.Scatter(
-            x=avg_prices['date'],
-            y=avg_prices['price'],
-            name=f"{item_name} (Market Avg)",
-            line=dict(dash='dash')
-        ))
-    
-    fig.update_layout(
-        title="Price Trends for Items with Largest Price Differences",
-        xaxis_title="Date",
-        yaxis_title="Price ($)",
-        hovermode="x unified",
-        yaxis_tickformat = '$.2f'
-    )
-    
-    st.plotly_chart(fig, use_container_width=True)
-    
-    # Competitor Analysis
-    st.subheader("Competitor Analysis")
-    
-    # Calculate average prices by store
-    store_prices = filtered_prices.groupby(['store_id', 'item_id'])['price'].mean().reset_index()
-    store_prices = store_prices.merge(stores_df[['store_id', 'store_name', 'distance']], on='store_id')
-    store_prices = store_prices.merge(items_df[['item_id', 'name']], on='item_id')
-    
-    # Create heatmap of prices by store
-    pivot_prices = store_prices.pivot_table(
-        values='price',
-        index='store_name',
-        columns='name',
-        aggfunc='mean'
-    ).round(2)
-    
-    # Format all price values as $X.00
-    for col in pivot_prices.columns:
-        if col != 'Distance (miles)':
-            pivot_prices[col] = pivot_prices[col].apply(lambda x: f"${x:.2f}" if pd.notnull(x) else "")
-    
-    # Add distance information
-    pivot_prices['Distance (miles)'] = store_prices.groupby('store_name')['distance'].first()
-    
-    st.dataframe(pivot_prices, use_container_width=True)
-
-    # Store Locations Map (Item-aware)
-    st.header("Store Locations Map")
+    # --- Store Locations Table and Map ---
+    st.header("Store Locations and Prices")
     item_options = items_df['name'].tolist()
     selected_item = st.selectbox("Choose a food item to display on the map:", item_options, key="item_selectbox_main")
     selected_item_id = items_df[items_df['name'] == selected_item]['item_id'].iloc[0]
     latest_date = prices_df['date'].max()
 
-    # Item Price Comparison Across Stores (now below the selectbox)
-    st.header("Compare Prices for a Food Item Across Stores")
-    item_prices = prices_df[(prices_df['item_id'] == selected_item_id) & (prices_df['date'] == latest_date)]
-    item_prices = item_prices.merge(stores_df, on='store_id')
-    item_prices = item_prices.sort_values('price')
-    st.subheader(f"Prices for {selected_item} at Each Store (as of {latest_date})")
-    st.dataframe(item_prices[['store_name', 'price', 'distance']].rename(columns={
-        'store_name': 'Store', 'price': 'Price ($)', 'distance': 'Distance (mi)'
-    }), use_container_width=True)
-
     # Prepare map data with price for selected item
     item_map_prices = prices_df[(prices_df['item_id'] == selected_item_id) & (prices_df['date'] == latest_date)]
+    stores_df['store_id'] = stores_df['store_id'].astype(str)
+    item_map_prices['store_id'] = item_map_prices['store_id'].astype(str)
     map_df = stores_df.merge(item_map_prices[['store_id', 'price']], on='store_id', how='left')
     map_df = map_df.rename(columns={'lat': 'latitude', 'lon': 'longitude'})
-    map_df['is_sopranos'] = map_df['store_name'].str.lower().str.contains('sopranos')
     map_df['price_str'] = map_df['price'].apply(lambda x: f"${x:.2f}" if pd.notnull(x) else "N/A")
+    map_df['label'] = map_df.apply(lambda row: f"{row['store_name']}\n{row['price_str']}", axis=1)
+    map_df['is_sopranos'] = map_df['store_name'].str.lower().str.contains('soprano')
 
-    # Normalize price for color scaling (green=cheapest, red=most expensive)
-    min_price = map_df['price'].min()
-    max_price = map_df['price'].max()
-    def price_to_color(price):
-        if pd.isnull(price):
-            return [128, 128, 128, 120]  # gray for missing
-        norm = (price - min_price) / (max_price - min_price) if max_price > min_price else 0
-        r = int(255 * norm)
-        g = int(255 * (1 - norm))
-        return [r, g, 0, 180]
-    map_df['color'] = map_df.apply(lambda row: [255, 0, 0, 200] if row['is_sopranos'] else price_to_color(row['price']), axis=1)
+    # Remove lat/lon from table
+    st.subheader(f"Store Locations and Prices for {selected_item} (as of {latest_date})")
+    display_df = map_df[['store_name', 'address', 'price_str']].copy()
+    display_df.columns = ['Store Name', 'Address', 'Price']
+    st.dataframe(display_df, use_container_width=True)
 
-    layer = pdk.Layer(
-        "ScatterplotLayer",
-        data=map_df,
-        get_position='[longitude, latitude]',
-        get_color='color',
-        get_radius=400,
-        pickable=True,
-        auto_highlight=True,
-        get_text='price_str',
-        get_text_size=16,
-    )
+    if map_df[['latitude', 'longitude']].dropna().empty:
+        st.warning('No store location data available for the map. Please check your stores.csv for lat/lon columns and values.')
+    else:
+        # Add slight jitter to overlapping points (optional, only if needed)
+        jitter = 0.0005
+        map_df['latitude_jitter'] = map_df['latitude'] + map_df.groupby(['latitude', 'longitude']).cumcount() * jitter
+        map_df['longitude_jitter'] = map_df['longitude'] + map_df.groupby(['latitude', 'longitude']).cumcount() * jitter
 
-    view_state = pdk.ViewState(
-        latitude=map_df['latitude'].mean() if not map_df.empty else 30.5594,
-        longitude=map_df['longitude'].mean() if not map_df.empty else -91.5557,
-        zoom=9,
-        pitch=0,
-    )
+        # IconLayer for Soprano's
+        icon_data = {
+            "url": "https://cdn-icons-png.flaticon.com/512/25/25694.png",  # white house PNG
+            "width": 512,
+            "height": 512,
+            "anchorY": 512
+        }
+        map_df['icon_data'] = map_df['is_sopranos'].apply(lambda x: icon_data if x else None)
 
-    tooltip = {
-        "html": "<b>{store_name}</b><br/>Category: {category}<br/>Distance: {distance} mi<br/><b>Price: {price_str}</b>",
-        "style": {"backgroundColor": "steelblue", "color": "white"}
-    }
+        icon_layer = pdk.Layer(
+            "IconLayer",
+            data=map_df[map_df['is_sopranos']],
+            get_icon="icon_data",
+            get_position='[longitude_jitter, latitude_jitter]',
+            get_size=4,
+            size_scale=10,
+            pickable=True,
+        )
 
-    st.pydeck_chart(pdk.Deck(
-        layers=[layer],
-        initial_view_state=view_state,
-        tooltip=tooltip
-    ), use_container_width=True, height=700)
+        # ScatterplotLayer for other stores
+        scatter_layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=map_df[~map_df['is_sopranos']],
+            get_position='[longitude_jitter, latitude_jitter]',
+            get_color=[0, 102, 204, 180],
+            get_radius=400,
+            pickable=True,
+            auto_highlight=True,
+        )
+
+        # TextLayer for all stores
+        text_layer = pdk.Layer(
+            "TextLayer",
+            data=map_df,
+            get_position='[longitude_jitter, latitude_jitter]',
+            get_text='label',
+            get_size=16,
+            get_color=[0, 0, 0, 255],
+            get_angle=0,
+            get_alignment_baseline="bottom",
+        )
+
+        view_state = pdk.ViewState(
+            latitude=map_df['latitude'].mean() if not map_df.empty else 30.5594,
+            longitude=map_df['longitude'].mean() if not map_df.empty else -91.5557,
+            zoom=9,
+            pitch=0,
+        )
+
+        tooltip = {
+            "html": "<b>{store_name}</b><br/><b>Price: {price_str}</b>",
+            "style": {"backgroundColor": "steelblue", "color": "white"}
+        }
+
+        st.pydeck_chart(pdk.Deck(
+            layers=[icon_layer, scatter_layer, text_layer],
+            initial_view_state=view_state,
+            tooltip=tooltip
+        ), use_container_width=True, height=700)
 
 if __name__ == "__main__":
     main() 

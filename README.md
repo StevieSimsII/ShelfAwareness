@@ -1,135 +1,122 @@
 # ShelfAwareness - Grocery Analytics & Price Comparison
 
-A modern toolkit for grocery store analytics and price comparison. This project helps you find real nearby grocery stores (using OpenStreetMap), compare prices across multiple retailers, and provides actionable insights for your own store's pricing strategy.
+A comprehensive toolkit for grocery store analytics and price comparison. This project helps you find nearby grocery stores, compare prices across multiple retailers, and provides insights to improve grocery retail operations.
 
 ## Features
 
-- **Dynamic Store Data**: Finds grocery stores within a 50-mile radius of Livonia, LA (or any location) using OpenStreetMap (OSM) Overpass API
-- **Price Comparison**: Compares prices for common grocery items across all detected stores
-- **Price Recommendations**: Suggests optimal retail prices for your store based on market data
-- **Interactive Web App**: Streamlit app for exploring, adjusting, and analyzing prices
+- **Price Comparison**: Finds grocery stores within a 50-mile radius and compares prices for 50+ common grocery items
+- **Data Analytics**: Tools and documentation for implementing advanced grocery retail analytics
+- **Real-time Price Data**: Scrapes real prices from major retailers.
 - **Reporting**: Generates CSV reports with detailed price comparisons
-- **Visualization**: Interactive data visualizations and competitor analysis
+- **Visualization**: Creates interactive data visualizations
+- **Location Intelligence**: Includes store distances and geographic analysis
 
 ## Project Components
 
-- **[`price_comparison_app.py`](price_comparison_app.py)**: Streamlit web app for interactive price comparison, recommendations, and market analysis
-- **[`data_collector.py`](data_collector.py)**: Tool for collecting real store locations from OSM and generating simulated price data
-- **`data/` directory**: Contains generated CSVs for stores, items, and prices
+- **[`price_comparison.py`](price_comparison.py)**: Core script that finds stores and collects price data
+- **[`price_comparison_app.py`](price_comparison_app.py)**: Streamlit web app for interactive exploration
+- **[`data_collector.py`](data_collector.py)**: Tool for collecting and aggregating price data
+- **[`grocery_analytics_improvement_ideas.md`](grocery_analytics_improvement_ideas.md)**: Comprehensive ideas for improving grocery analytics
+- **[`store_api_comparison.md`](store_api_comparison.md)**: Evaluation of different store APIs for data collection
 
 ## Setup
 
 1. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. (Optional) If you want to generate new data, ensure you have an internet connection (for OSM API access).
-
-## Usage
-
-### 1. Generate Data (Local Development)
-To fetch real store locations and generate new sample price data:
-```bash
-python data_collector.py
-```
-This will create/update:
-- `data/stores.csv` (real stores from OSM)
-- `data/items.csv` (sample grocery items)
-- `data/prices.csv` (simulated prices for all stores/items)
-
-### 2. Run the Streamlit App
-To launch the interactive price comparison dashboard:
-```bash
-streamlit run price_comparison_app.py
-```
-
-### 3. Deploy to Streamlit Cloud
-- Push your code and the `data/` directory to GitHub.
-- On [Streamlit Cloud](https://streamlit.io/cloud):
-  - Set the repository URL and main file as `price_comparison_app.py`.
-  - The app will use the pre-generated CSVs for fast startup.
-
-#### requirements.txt (for Streamlit Cloud)
-```
-streamlit==1.32.0
-pandas>=2.0.0
-plotly==5.19.0
-numpy>=1.26.0
-geopy
-```
-
-## Output
-
-### Data Files
-- **`data/stores.csv`**: Real store locations (from OSM)
-- **`data/items.csv`**: Master list of grocery items
-- **`data/prices.csv`**: Simulated price data for all stores/items
-
-### Visualizations & Features
-- Price recommendations for your store based on market averages
-- Interactive price adjustment tool to simulate new pricing
-- Price trends and competitor analysis
-- All prices shown in $X.00 format
-
-## How Store Data is Collected
-- The app uses the OpenStreetMap Overpass API to fetch all supermarkets, convenience stores, department stores, and discount stores within a 50-mile radius of your chosen location.
-- No store data is hardcoded; all locations are real and up-to-date.
-
-## How Price Data is Generated
-- Prices are simulated for all stores and items, with realistic variation by store type.
-- You can adjust the simulation logic in `data_collector.py` as needed.
-
-## Customization
-- To change the center location, edit the coordinates in `data_collector.py`.
-- To add more item categories or adjust price simulation, edit the items and pricing logic in `data_collector.py`.
-
-## Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Local Development
-
-1. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Run the app locally:
-```bash
-streamlit run price_comparison_app.py
+2. Install Chrome browser (required for web scraping)
+
+3. Create a `.env` file in the project root directory and add your Google Places API key:
+```
+GOOGLE_PLACES_API_KEY=your_api_key_here
 ```
 
-## Deployment
+You can obtain a Google Places API key from the [Google Cloud Console](https://console.cloud.google.com/).
 
-This app is configured for deployment on Streamlit Cloud. To deploy:
+## Usage
 
-1. Push your code to GitHub
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Connect your GitHub repository
-4. Select `price_comparison_app.py` as the main file
-5. Deploy
+Run the script with:
+```bash
+python price_comparison.py
+```
 
-## Project Structure
+The script will:
+1. Find grocery stores near zip code 70760
+2. Scrape real prices from store websites
+3. Generate price comparisons for 50+ grocery items
+4. Save the results to `price_comparison_report.csv`
+5. Create interactive visualizations
+6. Display the results in the console
 
-- `price_comparison_app.py`: Main Streamlit application
-- `data_collector.py`: Script for generating sample data
-- `data/`: Directory containing CSV data files
-  - `stores.csv`: Store information
-  - `items.csv`: Product information
-  - `prices.csv`: Price history
+## Output
 
-## Features
+### Data Files
+- **`stores.csv`**: Information about nearby grocery stores
+- **`price_comparison_report.csv`**: Detailed price comparison data
+- **`data/items.csv`**: Master list of grocery items
+- **`data/prices.csv`**: Historical price data
+- **`data/stores.csv`**: Detailed store information
 
-- Real-time price comparison
-- Margin analysis
-- Category-specific insights
-- Interactive visualizations
-- Price trend analysis
-- Competitor mapping
+### Visualizations
+The script creates three interactive HTML visualizations:
+1. `price_distribution.html`: Box plots showing price distribution by store for top items
+2. `average_prices.html`: Bar chart showing average prices by store
+3. `price_vs_distance.html`: Scatter plot showing price vs distance relationship
 
-## Requirements
+## Grocery Items
 
-See `requirements.txt` for full list of dependencies.
+The script compares prices for items across these categories:
+- Dairy & Eggs
+- Meat & Seafood
+- Produce
+- Pantry Items
+- Beverages
+- Snacks
+- Frozen Foods
+- Canned Goods
+- Condiments
+
+## Error Handling
+
+The script includes comprehensive error handling and logging:
+- Graceful fallback to simulated prices if web scraping fails
+- Detailed logging of all operations
+- Automatic cleanup of browser resources
+
+## Analytics Documentation
+
+This project includes several markdown files documenting analytics approaches:
+
+### [`grocery_analytics_improvement_ideas.md`](grocery_analytics_improvement_ideas.md)
+Comprehensive collection of innovative analytics ideas tailored for grocery retailers, including:
+
+- **Data Collection**: Real-time POS tracking, loyalty data analysis, foot traffic sensors
+- **Data Analysis**: Predictive modeling, basket analysis, shrinkage analytics
+- **Advanced Techniques**: ML models, NLP analysis, anomaly detection
+- **Geo & Market Intelligence**: Price mapping, regional trends, demographic analysis
+- **Operational Efficiency**: Shelf space optimization, predictive inventory modeling
+- **Customer Experience**: Sentiment analysis, movement heatmaps, personalization
+- **And more**: Omnichannel integration, sustainability insights, pricing optimization
+
+### [`store_api_comparison.md`](store_api_comparison.md)
+Evaluation of different APIs for collecting store and pricing data.
+
+## Note
+
+The script uses web scraping to get real prices from:
+- Walmart
+- Target
+
+For other stores, it uses simulated price data. To add more stores:
+1. Implement additional scraping methods in the `GroceryPriceComparer` class
+2. Add the store name pattern matching in the `get_prices` method
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

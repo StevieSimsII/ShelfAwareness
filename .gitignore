@@ -117,3 +117,6 @@ store_data.log
 
 # Ignore the cloned ShelfAwareness directory
 ShelfAwareness/
+
+  #ignore the .env file
+  .env

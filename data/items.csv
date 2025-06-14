@@ -1,36 +1,4 @@
-item_id,name,category,target_margin
-1,Milk (1 gallon),Dairy,0.15
-2,Eggs (dozen),Dairy,0.15
-3,Butter (1lb),Dairy,0.2
-4,Cheese (8oz),Dairy,0.25
-5,Chicken Breast (1lb),Meat,0.2
-6,Ground Beef (1lb),Meat,0.25
-7,Pork Chops (1lb),Meat,0.25
-8,Bacon (12oz),Meat,0.3
-9,Bananas (1lb),Produce,0.25
-10,Apples (1lb),Produce,0.3
-11,Tomatoes (1lb),Produce,0.35
-12,Lettuce (head),Produce,0.3
-13,Rice (5lb bag),Pantry,0.2
-14,Pasta (1lb),Pantry,0.25
-15,Cereal (box),Pantry,0.3
-16,Flour (5lb bag),Pantry,0.2
-17,Coffee (12oz),Beverages,0.35
-18,Orange Juice (1/2 gal),Beverages,0.3
-19,Soda (12-pack),Beverages,0.25
-20,Bread (loaf),Bakery,0.4
-21,Cake (whole),Bakery,0.5
-22,Cookies (dozen),Bakery,0.45
-23,Rotisserie Chicken,Prepared Foods,0.45
-24,Deli Sandwich,Prepared Foods,0.5
-25,Ready Meal,Prepared Foods,0.55
-26,Toilet Paper (12pk),Paper Goods,0.15
-27,Paper Towels (8pk),Paper Goods,0.2
-28,Laundry Detergent,Cleaning Supplies,0.25
-29,Dish Soap,Cleaning Supplies,0.3
-30,Shampoo,Personal Care,0.3
-31,Toothpaste,Personal Care,0.35
-32,Multivitamin,Health & Wellness,0.4
-33,Pain Reliever,Health & Wellness,0.35
-34,Organic Apples (1lb),Specialty Items,0.4
-35,Gluten-Free Bread,Specialty Items,0.45
+item_id,name
+1,milk
+2,eggs
+3,bread
